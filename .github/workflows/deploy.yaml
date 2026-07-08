@@ -8,6 +8,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      WEBSITE_DIR: www
 
     steps:
       - name: Checkout Repository
@@ -22,9 +24,10 @@ jobs:
 
       - name: Upload Files to S3
         run: |
-          aws s3 sync ./www s3://${{ secrets.S3_BUCKET_NAME }} --delete
-          --exclude ".git/*" \
-          --exclude ".github/*"
+          aws s3 sync "$WEBSITE_DIR" "s3://${{ secrets.S3_BUCKET_NAME }}" \
+            --delete \
+            --exclude ".git/*" \
+            --exclude ".github/*"
 
       - name: Invalidate CloudFront Cache
         run: |
